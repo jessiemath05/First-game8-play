@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- ✅ 快取連結預覽 -->
+    <meta name="description" content="© 2025–2026 Jessie Math 捷析老師. All rights reserved.">
+    <!-- ✅ LINE / FB 預覽用 -->
+    <meta property="og:title" content="Jessie Math捷析  -  懸浮幾何植被牆">
+    <meta property="og:description" content="© 2025–2026 Jessie Math 捷析老師. All rights reserved.">
+    <meta property="og:type" content="website">
+    <!-- ✅ 預覽圖片-->
+    <meta property="og:image" content="g5-u8-2.png">
+    <meta property="og:image:width" content="1024">
+    <meta property="og:image:height" content="1536">
+    <meta property="og:image:alt" content="Jessie Math 遊戲封面">
+    <!-- ✅ 有些平台會參考 -->
+    <link rel="image_src" href="g5-u8-2.png">
+    <!-- ✅ Twitter / X（可用同一張圖） -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Jessie Math捷析  -  懸浮幾何植被牆">
+    <meta name="twitter:description" content="© 2025–2026 Jessie Math 捷析老師. All rights reserved.">
+    <meta name="twitter:image" content="g5-u8-2.png">
+
+    <title>Jessie Math捷析  -  懸浮幾何植被牆</title>
+    
+    <!-- 引入 FontAwesome 以顯示指南針圖示 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-purple: #2a0a4d;
+            --accent-glow: #bc13fe;
+            --neon-green: #39ff14;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --header-height: 80px;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: "Microsoft JhengHei", sans-serif;
+            background-color: var(--primary-purple);
+            /* 修改背景圖片設定：放大延伸且對齊左上角 */
+            background-image: url('jessie-logo-play.jpg');
+            background-size: cover;
+            background-position: top left;
+            background-repeat: no-repeat;
+            color: white;
+            overflow: hidden;
+            /* 解決字反藍/拖移問題 */
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        /* 允許輸入框可以選取文字 */
+        input {
+            user-select: auto;
+            -webkit-user-select: auto;
+        }
+
+        /* --- 手機直向提示遮罩 (修改為只針對寬度小於768px的手機，平板不受限) --- */
+        #rotate-device-overlay {
+            display: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #1a0533; z-index: 9999;
+            flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; color: white; padding: 20px; box-sizing: border-box;
+        }
+        #rotate-device-overlay h2 { font-size: 24px; color: var(--accent-glow); }
+        
+        @media screen and (max-width: 767px) and (orientation: portrait) {
+            #rotate-device-overlay { display: flex; }
+            #main-wrapper { display: none; }
+        }
+
+        /* --- Header 區 --- */
+        header {
+            height: var(--header-height);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-bg);
+            z-index: 100;
+            box-sizing: border-box;
+        }
+
+        .hero-left { display: flex; align-items: center; }
+        .logo-circle {
+            width: 50px; height: 50px;
+            background: #ffa500;
+            border-radius: 50%;
+            margin-right: 15px;
+            overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
+            border: 2px solid white;
+        }
+        .logo-circle img { width: 100%; height: 100%; object-fit: cover; }
+        .brand-name { font-size: 24px; font-weight: bold; letter-spacing: 1px; text-shadow: 1px 1px 3px black; }
+
+        .nav-right { display: flex; gap: 15px; }
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.9); color: #333;
+            padding: 8px 18px; border-radius: 25px;
+            text-decoration: none; font-weight: bold;
+            display: flex; align-items: center; gap: 8px;
+            transition: 0.3s; font-size: 14px; border: 1px solid transparent;
+        }
+        .nav-btn:hover {
+            background: var(--accent-glow); color: white;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+        .btn-purple { background: #e8dbff; border: 1px solid #bc13fe; }
+
+        /* --- 遊戲主容器 --- */
+        #app { 
+            height: calc(100vh - var(--header-height)); 
+            position: relative; 
+            overflow: hidden; 
+        }
+        
+        .screen {
+            display: none; width: 100%; height: 100%;
+            box-sizing: border-box;
+            animation: fadeIn 0.5s ease;
+        }
+        .screen.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* --- 登入頁 (可滾動) --- */
+        #screen-login {
+            flex-direction: column; 
+            justify-content: flex-start; 
+            align-items: center;
+            overflow-y: auto;
+            padding: 40px 20px 100px 20px; /* 底部增加 padding 避免被 footer 擋住 */
+        }
+        .login-box {
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); padding: 40px;
+            border-radius: 20px; border: 1px solid var(--accent-glow);
+            text-align: center; max-width: 550px; width: 100%; box-sizing: border-box;
+            margin-bottom: 20px; box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        input[type="text"] {
+            width: 80%; padding: 12px; margin: 20px 0;
+            border-radius: 10px; border: none; outline: none; font-size: 18px; text-align: center;
+        }
+        .start-btn {
+            background: var(--neon-green); color: #000; border: none;
+            padding: 15px 40px; font-size: 20px; border-radius: 30px;
+            cursor: pointer; font-weight: bold; transition: 0.3s;
+            box-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
+        }
+        .start-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--neon-green); }
+
+        /* --- 排行榜 --- */
+        .leaderboard {
+            width: 100%; max-width: 650px; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
+            border-radius: 15px; padding: 20px; margin-bottom: 40px; box-sizing: border-box;
+        }
+        .rank-item {
+            display: grid; 
+            /* 新增狀態欄位，調整各欄位比例 */
+            grid-template-columns: 50px 1.2fr 1fr 80px 1.5fr; 
+            padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); align-items: center;
+            font-size: 15px;
+        }
+        @media screen and (max-width: 600px) {
+            .rank-item { font-size: 12px; grid-template-columns: 40px 1fr 1fr 60px 1fr; }
+        }
+
+        /* --- 遊戲核心區 (左右分屏) --- */
+        #screen-game {
+            flex-direction: row; 
+            padding: 20px;
+            padding-bottom: 80px; /* 留出 footer 空間 */
+            gap: 20px;
+        }
+
+        /* 左側圖形區 */
+        #game-canvas-container {
+            flex: 1;
+            height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(3px);
+            border: 2px solid var(--accent-glow); border-radius: 15px;
+            position: relative; overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
+        }
+        svg { width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
+        
+        /* --- 白板系統 --- */
+        #whiteboard-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 15;
+            background: transparent;
+            cursor: crosshair;
+            display: none;
+            /* 解決拖移問題 */
+            touch-action: none; 
+        }
+        #whiteboard-canvas.active {
+            display: block;
+        }
+        .bottom-right-wb {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 20;
+        }
+        .wb-btn {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--accent-glow);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .wb-btn:hover { background: rgba(188, 19, 254, 0.4); }
+        .wb-btn.active {
+            background: var(--neon-green);
+            color: black;
+            border-color: var(--neon-green);
+            box-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
+        }
+
+        /* 右側面板區 */
+        .ui-panel {
+            width: 350px; 
+            background: rgba(0,0,0,0.8); padding: 25px;
+            border-radius: 15px; border: 1px solid rgba(255,255,255,0.2);
+            display: flex; flex-direction: column;
+            box-shadow: -5px 0 20px rgba(0,0,0,0.5);
+            box-sizing: border-box;
+        }
+        .ui-panel-top { font-size: 1.2rem; margin-bottom: 15px; line-height: 1.6; }
+        .ui-panel-top span { font-weight: bold; color: var(--neon-green); }
+        
+        .action-btn {
+            background: #ff00ff; color: white; border: none; padding: 15px; width: 100%;
+            border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1.2rem;
+            margin: 15px 0; box-shadow: 0 0 10px rgba(255,0,255,0.5); transition: 0.2s;
+        }
+        .action-btn:hover { background: #d600d6; }
+        .action-btn:disabled { background: #555; color: #888; cursor: not-allowed; box-shadow: none; }
+
+        .input-section { margin-top: auto; margin-bottom: 20px; }
+        #shape-hint { font-size: 1.1rem; margin-bottom: 10px; color: #aaa; }
+        #answer-input { 
+            width: 100%; padding: 15px; font-size: 1.5rem; 
+            border-radius: 8px; background: rgba(255,255,255,0.9); 
+            color: black; border: 2px solid #ccc; text-align: center;
+            box-sizing: border-box; margin: 0;
+        }
+        .infuse-btn {
+            background: var(--neon-green); color: black; border: none; padding: 15px; width: 100%;
+            border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1.3rem;
+            margin-top: 15px; transition: 0.2s;
+        }
+        .infuse-btn:hover { box-shadow: 0 0 20px var(--neon-green); transform: translateY(-2px); }
+
+        .control-btns {
+            display: flex; gap: 10px; margin-top: auto;
+        }
+        .ctrl-btn { 
+            flex: 1; padding: 12px 5px; border-radius: 8px; border: none; 
+            cursor: pointer; font-weight: bold; font-size: 1rem; color: white; transition: 0.2s;
+        }
+        .ctrl-btn:hover { filter: brightness(1.2); }
+
+        .bottom-left {
+            position: absolute; bottom: 20px; left: 20px;
+            display: flex; align-items: center; gap: 15px; z-index: 10;
+        }
+        .sound-icon {
+            width: 45px; height: 45px; cursor: pointer;
+            background: var(--glass-bg); border-radius: 50%; font-size: 1.2rem;
+            display: flex; justify-content: center; align-items: center; border: 1px solid rgba(255,255,255,0.3);
+        }
+        .medal-box img { width: 60px; height: 60px; border-radius: 50%; box-shadow: 0 0 20px gold; border: 2px solid gold; }
+
+        #overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); display: none;
+            justify-content: center; align-items: center; z-index: 30; border-radius: 15px;
+        }
+
+        /* --- 動畫特效 --- */
+        .scan-line-anim {
+            position: absolute; width: 3px; height: 100%; background: #00ffff;
+            box-shadow: 0 0 20px 8px rgba(0, 255, 255, 0.6);
+            animation: scanSweep 1.2s ease-in-out;
+            pointer-events: none; opacity: 0; left: 0; z-index: 5;
+        }
+        @keyframes scanSweep {
+            0% { left: 0%; opacity: 1; }
+            50% { left: 100%; opacity: 1; }
+            100% { left: 100%; opacity: 0; }
+        }
+
+        .shape-correct { animation: shapeGreen 0.6s forwards; }
+        @keyframes shapeGreen {
+            0% { fill: rgba(188, 19, 254, 0.3); stroke: #bc13fe; }
+            50% { fill: var(--neon-green); stroke: #fff; transform: scale(1.05); filter: drop-shadow(0 0 15px var(--neon-green)); }
+            100% { fill: #228b22; stroke: var(--neon-green); transform: scale(1); opacity: 0.9; }
+        }
+
+        .shape-overflow { animation: overflowAnim 0.5s forwards; }
+        @keyframes overflowAnim {
+            0% { transform: translateX(0); fill: rgba(188, 19, 254, 0.3); }
+            25% { transform: translateX(-10px); fill: #ff4500; stroke: #ff0000; filter: drop-shadow(0 0 15px #ff0000); }
+            50% { transform: translateX(10px); }
+            75% { transform: translateX(-10px); }
+            100% { transform: translateX(0); fill: rgba(188, 19, 254, 0.3); stroke: #bc13fe; }
+        }
+
+        .shape-wither { animation: witherAnim 0.5s forwards; }
+        @keyframes witherAnim {
+            0% { transform: scale(1); fill: rgba(188, 19, 254, 0.3); }
+            50% { transform: scale(0.9); fill: #333; stroke: #666; }
+            100% { transform: scale(1); fill: rgba(188, 19, 254, 0.3); stroke: #bc13fe; }
+        }
+        
+        .svg-text { fill: #00ffff; font-size: 18px; font-weight: bold; text-shadow: 2px 2px 4px black; font-family: sans-serif; }
+        .svg-line { stroke: #00ffff; stroke-width: 2; stroke-dasharray: 6,6; }
+        .svg-right-angle { fill: transparent; stroke: #00ffff; stroke-width: 2; }
+
+        /* --- 結算畫面特效 --- */
+        #screen-result {
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .result-box {
+            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(5px); padding: 50px;
+            border-radius: 20px; border: 2px solid var(--accent-glow);
+            text-align: center; max-width: 550px; width: 100%; box-sizing: border-box;
+            box-shadow: 0 0 30px rgba(188, 19, 254, 0.6);
+            animation: fadeIn 0.5s ease;
+            z-index: 50;
+        }
+        .result-medal-img {
+            width: 150px; height: 150px; border-radius: 50%;
+            box-shadow: 0 0 30px gold; border: 4px solid gold;
+            margin: 25px auto; display: block; object-fit: cover;
+            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            80% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* --- Footer 子彈型樣式 --- */
+        .footer-wrapper {
+            position: fixed;
+            bottom: 15px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            z-index: 200;
+            pointer-events: none; /* 讓底部點擊事件穿透 */
+        }
+        .footer-pill {
+            background: rgba(20, 5, 40, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--accent-glow);
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            padding: 10px 25px;
+            gap: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            pointer-events: auto; /* 恢復膠囊區域的點擊 */
+        }
+        .footer-left, .footer-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .footer-dot {
+            width: 10px;
+            height: 10px;
+            background-color: var(--neon-green);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--neon-green);
+        }
+        .footer-copy {
+            font-size: 13px;
+            color: #eee;
+            letter-spacing: 0.5px;
+        }
+        .footer-icon {
+            color: #ffa500;
+            font-size: 16px;
+        }
+        .footer-tagline {
+            font-size: 13px;
+            color: #ccc;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        /* --- 響應式佈局 --- */
+        @media screen and (max-width: 1024px) {
+            #app { overflow-y: auto; }
+            #screen-game { flex-direction: column; height: auto; min-height: 100%; padding-bottom: 100px; }
+            #game-canvas-container { min-height: 400px; flex: none; width: 100%; }
+            .ui-panel { width: 100%; flex: none; }
+        }
+        @media screen and (max-width: 768px) {
+            .footer-pill { flex-direction: column; gap: 8px; padding: 12px 20px; border-radius: 20px; text-align: center; }
+            .footer-left, .footer-right { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- 背景音樂 -->
+    <audio id="bgm" src="1.mp3" loop preload="auto"></audio>
+
+    <div id="rotate-device-overlay">
+        <h2>🔄 請旋轉設備</h2>
+        <p>工程師，請將手機轉為橫向以啟動修復系統！</p>
+    </div>
+
+    <div id="main-wrapper">
+        <header>
+            <div class="hero-left">
+                <div class="logo-circle"><img src="JESSIEMATH-Q.png" alt="Jessie Logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+PGNpcmNsZSBjeD0iMjUiIGN5PSIyNSIgcj0iMjUiIGZpbGw9IiNmZmE1MDAiLz48L3N2Zz4='"></div>
+                <div class="brand-name">Jessie Math捷析</div>
+            </div>
+            <div class="nav-right">
+                <a href="#" class="nav-btn">🏠 首頁</a>
+                <a href="#" class="nav-btn">🎮 遊戲大廳</a>
+                <a href="#" class="nav-btn btn-purple">🔙 G5面積</a>
+            </div>
+        </header>
+
+        <div id="app">
+            <!-- 登入與排行榜畫面 -->
+            <div id="screen-login" class="screen active">
+                <div class="login-box">
+                    <h1 style="margin-top:0;">懸浮幾何植被牆</h1>
+                    <p style="font-size:1.1rem;">光譜工程師，請輸入你的代號以啟動數據塔：</p>
+                    <input type="text" id="player-name" placeholder="輸入名字..." maxlength="10">
+                    <div style="text-align: left; font-size: 15px; margin: 15px 0; line-height: 1.8; color: #ddd;">
+                        <b>任務規則：</b><br>
+                        1. 【掃描/切割】：點擊工具測量圖形的底與高，或雷射切割複合碎片。<br>
+                        2. 【能量灌注】：根據公式計算總面積，輸入數值並按「Enter」修復。<br>
+                        3. 【過關條件】：限時 <b style="color:var(--neon-green)">120秒</b> 內，答對 <b style="color:var(--neon-green)">5題(含)以上</b> 即可獲得過關勳章！
+                    </div>
+                    <button class="start-btn" onclick="startGame()">啟動遊戲</button>
+                </div>
+
+                <div class="leaderboard">
+                    <h3 style="margin-top:0;">🏆 數據塔修復排行榜 (Top 10)</h3>
+                    <div id="leaderboard-list"></div>
+                </div>
+            </div>
+
+            <!-- 遊戲畫面 -->
+            <div id="screen-game" class="screen">
+                <div id="game-canvas-container">
+                    <svg id="game-svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet"></svg>
+                    
+                    <canvas id="whiteboard-canvas"></canvas>
+                    <div class="bottom-right-wb">
+                        <button id="wb-clear-btn" class="wb-btn" onclick="clearWhiteboard()" style="display:none;">🗑️ 清除</button>
+                        <button id="wb-toggle-btn" class="wb-btn" onclick="toggleWhiteboard()">✍️ 開啟白板</button>
+                    </div>
+
+                    <div id="scan-effect" class="scan-line-anim"></div>
+                    <div id="overlay"><h1>暫停中</h1></div>
+                    
+                    <div class="bottom-left">
+                        <div class="sound-icon" onclick="toggleSound()"><span id="sound-status">🔊</span></div>
+                        <div class="medal-box" id="final-medal" style="display:none;">
+                            <img src="8.jpg" alt="過關勳章" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+PGNpcmNsZSBjeD0iMjUiIGN5PSIyNSIgcj0iMjUiIGZpbGw9ImdvbGQiLz48L3N2Zz4='">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="ui-panel">
+                    <div class="ui-panel-top">
+                        <div>玩家：<span id="ui-name">-</span></div>
+                        <div>進度：第 <span id="ui-current-q">1</span> 題 (答對 <span id="ui-score">0</span> 題)</div>
+                        <div>剩餘時間：<span id="ui-timer" style="color: #ff9800; font-size: 1.4rem;">120</span> 秒</div>
+                    </div>
+                    <hr style="border-color: rgba(255,255,255,0.2); width: 100%; margin: 10px 0;">
+                    
+                    <button id="tool-btn" class="action-btn" onclick="useTool()">🔍 啟動光譜掃描儀</button>
+                    
+                    <div class="input-section">
+                        <p id="shape-hint">等待掃描數據...</p>
+                        <input type="number" id="answer-input" placeholder="輸入總面積 (Enter)">
+                        <button class="infuse-btn" onclick="checkAnswer()">🌱 灌注能量</button>
+                    </div>
+
+                    <div class="control-btns">
+                        <button class="ctrl-btn" style="background:#ff9800" onclick="togglePause()">暫停</button>
+                        <button class="ctrl-btn" style="background:#2196f3" onclick="resetGame()">重來</button>
+                        <button class="ctrl-btn" style="background:#f44336" onclick="goHome()">回主選單</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 新增結算畫面 -->
+            <div id="screen-result" class="screen">
+                <div class="result-box">
+                    <h1 id="result-title" style="margin-top:0; font-size: 2.5rem;">結算</h1>
+                    <p id="result-desc" style="font-size:1.3rem; line-height: 1.8; color: #ddd;"></p>
+                    <div id="result-medal-container" style="display:none;">
+                        <!-- 若讀不到 8.jpg 則顯示備用 SVG 徽章 -->
+                        <img src="8.jpg" alt="過關勳章" class="result-medal-img" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIj48Y2lyY2xlIGN4PSIxMDAiIGN5PSIxMDAiIHI9IjEwMCIgZmlsbD0iZ29sZCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJibGFjayIgZm9udC1zaXplPSI0MCI+5Yuz56ugPC90ZXh0Pjwvc3ZnPg=='">
+                    </div>
+                    <button class="start-btn" style="margin-top:20px;" onclick="goHome()">返回主選單</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 子彈型 Footer -->
+    <div class="footer-wrapper">
+        <footer class="footer-pill">
+            <div class="footer-left">
+                <div class="footer-dot" aria-hidden="true"></div>
+                <div class="footer-copy">© 2025–2026 Jessie Math 捷析老師. All rights reserved.</div>
+            </div>
+            <div class="footer-right">
+                <div class="footer-icon" aria-hidden="true"><i class="fas fa-compass"></i></div>
+                <div class="footer-tagline">數學不迷路，捷析Jessie帶你走向理解。</div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        let playerName = "";
+        let score = 0;
+        let currentQuestion = 1; 
+        let reverseCount = 0; // 反推題保底計算機
+        let timeLeft = 120; 
+        let timerInterval;
+        let isPaused = false;
+        let isMuted = false;
+        let currentShapeData = {};
+        let isScanned = false;
+        const UNIT = 25; // 單位長度確保最大疊加圖形不會超出邊界
+
+        // 音效系統
+        let audioCtx;
+        function initAudio() {
+            if(!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+        }
+        function playTone(freq, type, duration, vol = 0.1) {
+            if (isMuted || !audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+        function playFX(type) {
+            if(isMuted) return;
+            initAudio(); 
+            if(type === 'scan') {
+                playTone(400, 'sine', 0.1, 0.1);
+                setTimeout(() => playTone(800, 'sine', 0.1, 0.1), 100);
+                setTimeout(() => playTone(1200, 'sine', 0.1, 0.1), 200);
+            } else if(type === 'correct') {
+                playTone(987.77, 'sine', 0.1, 0.2); 
+                setTimeout(() => playTone(1318.51, 'sine', 0.4, 0.2), 100); 
+            } else if(type === 'wrong') {
+                playTone(150, 'sawtooth', 0.3, 0.2);
+                setTimeout(() => playTone(100, 'sawtooth', 0.4, 0.2), 150);
+            }
+        }
+
+        // 白板系統功能
+        const wbCanvas = document.getElementById('whiteboard-canvas');
+        const wbCtx = wbCanvas.getContext('2d');
+        let isDrawing = false;
+        let isWbActive = false;
+
+        function resizeCanvas() {
+            if (wbCanvas.parentElement) {
+                wbCanvas.width = wbCanvas.parentElement.clientWidth;
+                wbCanvas.height = wbCanvas.parentElement.clientHeight;
+            }
+        }
+        window.addEventListener('resize', () => { if (isWbActive) resizeCanvas(); });
+
+        function toggleWhiteboard() {
+            isWbActive = !isWbActive;
+            const btn = document.getElementById('wb-toggle-btn');
+            const clearBtn = document.getElementById('wb-clear-btn');
+            if (isWbActive) {
+                wbCanvas.classList.add('active');
+                btn.classList.add('active');
+                btn.innerText = "✍️ 關閉白板";
+                clearBtn.style.display = 'inline-block';
+                resizeCanvas();
+            } else {
+                wbCanvas.classList.remove('active');
+                btn.classList.remove('active');
+                btn.innerText = "✍️ 開啟白板";
+                clearBtn.style.display = 'none';
+            }
+        }
+
+        function clearWhiteboard() { wbCtx.clearRect(0, 0, wbCanvas.width, wbCanvas.height); }
+
+        function getMousePos(e) {
+            const rect = wbCanvas.getBoundingClientRect();
+            let clientX = e.clientX;
+            let clientY = e.clientY;
+            if (e.touches && e.touches.length > 0) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            }
+            return { x: clientX - rect.left, y: clientY - rect.top };
+        }
+
+        function startPosition(e) {
+            if(!isWbActive) return;
+            isDrawing = true;
+            const pos = getMousePos(e);
+            wbCtx.beginPath();
+            wbCtx.moveTo(pos.x, pos.y);
+        }
+
+        function endPosition(e) {
+            if(!isWbActive) return;
+            isDrawing = false;
+            wbCtx.beginPath();
+        }
+
+        function draw(e) {
+            if (!isDrawing || !isWbActive) return;
+            const pos = getMousePos(e);
+            wbCtx.lineWidth = 4;
+            wbCtx.lineCap = "round";
+            wbCtx.strokeStyle = "#39ff14"; 
+            wbCtx.lineTo(pos.x, pos.y);
+            wbCtx.stroke();
+            wbCtx.beginPath();
+            wbCtx.moveTo(pos.x, pos.y);
+        }
+
+        wbCanvas.addEventListener('mousedown', startPosition);
+        wbCanvas.addEventListener('mouseup', endPosition);
+        wbCanvas.addEventListener('mousemove', draw);
+        wbCanvas.addEventListener('mouseout', endPosition);
+        wbCanvas.addEventListener('touchstart', (e) => { e.preventDefault(); startPosition(e); }, { passive: false });
+        wbCanvas.addEventListener('touchend', endPosition);
+        wbCanvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e); }, { passive: false });
+
+        document.getElementById('answer-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') checkAnswer();
+        });
+
+        function initLeaderboard() {
+            const list = document.getElementById('leaderboard-list');
+            let data = JSON.parse(localStorage.getItem('jessieMath_ranks')) || [];
+            // 更新排行榜欄位，加入狀態
+            list.innerHTML = `<div class="rank-item" style="color:var(--accent-glow)"><b>排名</b><b>玩家</b><b>分數/題數</b><b>狀態</b><b>日期</b></div>`;
+            data.sort((a,b) => b.score - a.score).slice(0, 10).forEach((item, index) => {
+                // 第四名後自行產生圖示
+                let rankIcon = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `🏅 ${index + 1}.`;
+                let statusColor = item.status === "闖關成功" ? "var(--neon-green)" : "#ff4500";
+                
+                list.innerHTML += `<div class="rank-item">
+                                        <span>${rankIcon}</span>
+                                        <span>${item.name}</span>
+                                        <span>${item.score}/${item.total}</span>
+                                        <span style="color:${statusColor}; font-weight:bold;">${item.status || '未知'}</span>
+                                        <span style="font-size:12px; color:#bbb">${item.date}</span>
+                                   </div>`;
+            });
+        }
+
+        function startGame() {
+            const nameInput = document.getElementById('player-name').value;
+            if (!nameInput) return alert("工程師，請告知你的名字！");
+            playerName = nameInput;
+            document.getElementById('ui-name').innerText = playerName;
+            initAudio(); 
+            
+            // 播放背景音樂
+            const bgm = document.getElementById('bgm');
+            if (!isMuted) {
+                bgm.play().catch(e => console.log("BGM play failed:", e));
+            }
+            
+            switchScreen('screen-game');
+            resetGameParams();
+            nextQuestion();
+            startTimer();
+        }
+
+        function switchScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            if (id === 'screen-game' && isWbActive) resizeCanvas();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                if(!isPaused) {
+                    timeLeft--;
+                    document.getElementById('ui-timer').innerText = timeLeft;
+                    if(timeLeft <= 0) endGame();
+                }
+            }, 1000);
+        }
+
+        // ==========================================
+        // 核心引擎：極致動態幾何演算系統
+        // ==========================================
+
+        function getRandomShapeType() {
+            const pool = [
+                'triangle', 'triangle', 'triangle', 
+                'parallelogram', 'parallelogram', 'parallelogram', 
+                'trapezoid', 'trapezoid', 'trapezoid', 
+                'rectangle', 'square'
+            ];
+            return pool[Math.floor(Math.random() * pool.length)];
+        }
+
+        function getShapeName(type) {
+            const map = { 'rectangle': '矩形', 'square': '正方形', 'triangle': '三角形', 'parallelogram': '平行四邊形', 'trapezoid': '梯形' };
+            return map[type];
+        }
+
+        function getFormula(type) {
+            if(type==='triangle') return '底 × 高 ÷ 2';
+            if(type==='parallelogram') return '底 × 高';
+            if(type==='trapezoid') return '(上底 + 下底) × 高 ÷ 2';
+            if(type==='rectangle') return '長 × 寬';
+            if(type==='square') return '邊長 × 邊長';
+            return '';
+        }
+
+        function makePath(pts) {
+            let parts = pts.split(' ').filter(p => p.trim());
+            let d = "M " + parts[0];
+            for(let i=1; i<parts.length; i++) d += " L " + parts[i];
+            d += " Z";
+            return d;
+        }
+
+        function genParams(type, role) {
+            let w, h, topB, botB, offset, s;
+            let baseW = role==='outer'?12 : role==='inner'?3 : role==='top'?6 : role==='bottom'?8 : 8;
+            let baseH = role==='outer'?9  : role==='inner'?2 : role==='top'?4 : role==='bottom'?5 : 6;
+
+            if (type === 'rectangle') {
+                w = Math.floor(Math.random() * 4) + baseW;
+                h = Math.floor(Math.random() * 3) + baseH;
+                return { type, w, h };
+            } else if (type === 'square') {
+                s = Math.floor(Math.random() * 3) + baseW;
+                return { type, w: s, h: s, s };
+            } else if (type === 'triangle') {
+                w = Math.floor(Math.random() * 4) + baseW + 2; 
+                h = Math.floor(Math.random() * 3) + baseH;
+                if (role === 'inner') {
+                    offset = Math.floor(w / 2);
+                } else {
+                    offset = Math.floor(Math.random() * w); 
+                }
+                return { type, w, h, topOffset: offset };
+            } else if (type === 'parallelogram') {
+                w = Math.floor(Math.random() * 4) + baseW; 
+                h = Math.floor(Math.random() * 3) + baseH;
+                offset = Math.floor(Math.random() * 3) + 1; 
+                return { type, w, h, offset };
+            } else if (type === 'trapezoid') {
+                topB = Math.floor(Math.random() * 3) + baseW - 2;
+                if (topB < 1) topB = 1;
+                botB = topB + Math.floor(Math.random() * 4) + 2;
+                h = Math.floor(Math.random() * 3) + baseH;
+                offset = (botB - topB) / 2;
+                return { type, topB, botB, h, offset, w: botB };
+            }
+        }
+
+        function getShapeDrawData(p, cx, topY, M, role) {
+            let pts = "";
+            let scans = [];
+            let area = 0;
+            let startX = cx - (p.w * UNIT) / 2;
+            let isInner = (role === 'inner');
+            let pre = isInner ? "內" : (role === 'outer' ? "大" : "");
+
+            if (p.type === 'rectangle') {
+                area = (p.w * M) * (p.h * M);
+                pts = `${startX},${topY} ${startX+p.w*UNIT},${topY} ${startX+p.w*UNIT},${topY+p.h*UNIT} ${startX},${topY+p.h*UNIT}`;
+                
+                if(role === 'top') {
+                    scans.push({ type: 'text', x: cx, y: topY-10, text: `頂長: ${p.w*M}` });
+                    scans.push({ type: 'line', x1: startX, y1: topY, x2: startX+p.w*UNIT, y2: topY, style: 'dash' });
+                } else {
+                    scans.push({ type: 'text', x: cx, y: topY+p.h*UNIT+20, text: `${pre}長: ${p.w*M}` });
+                }
+                scans.push({ type: 'text', x: startX-30, y: topY+(p.h*UNIT)/2, text: `${pre}寬: ${p.h*M}` });
+                scans.push({ type: 'rect', x: startX, y: topY+p.h*UNIT-15, w: 15, h: 15 });
+                if(isInner) scans.push({ type: 'line', x1: startX, y1: topY, x2: startX+p.w*UNIT, y2: topY+p.h*UNIT, style: 'cross' });
+
+            } else if (p.type === 'square') {
+                area = (p.s * M) * (p.s * M);
+                pts = `${startX},${topY} ${startX+p.s*UNIT},${topY} ${startX+p.s*UNIT},${topY+p.s*UNIT} ${startX},${topY+p.s*UNIT}`;
+                
+                if(role === 'top') {
+                    scans.push({ type: 'text', x: cx, y: topY-10, text: `頂邊長: ${p.s*M}` });
+                    scans.push({ type: 'line', x1: startX, y1: topY, x2: startX+p.s*UNIT, y2: topY, style: 'dash' });
+                } else {
+                    scans.push({ type: 'text', x: cx, y: topY+p.s*UNIT+20, text: `${pre}邊長: ${p.s*M}` });
+                }
+                scans.push({ type: 'text', x: startX-35, y: topY+(p.s*UNIT)/2, text: `${pre}邊長: ${p.s*M}` });
+                scans.push({ type: 'rect', x: startX, y: topY+p.s*UNIT-15, w: 15, h: 15 });
+                if(isInner) scans.push({ type: 'line', x1: startX, y1: topY, x2: startX+p.s*UNIT, y2: topY+p.s*UNIT, style: 'cross' });
+
+            } else if (p.type === 'triangle') {
+                area = (p.w * M * p.h * M) / 2;
+                let topX = startX + p.topOffset * UNIT;
+                pts = `${topX},${topY} ${startX+p.w*UNIT},${topY+p.h*UNIT} ${startX},${topY+p.h*UNIT}`;
+                
+                if(role === 'top') {
+                    scans.push({ type: 'text', x: cx, y: topY+p.h*UNIT-10, text: `頂底: ${p.w*M}` });
+                    scans.push({ type: 'line', x1: startX, y1: topY+p.h*UNIT, x2: startX+p.w*UNIT, y2: topY+p.h*UNIT, style: 'dash' });
+                } else {
+                    scans.push({ type: 'text', x: cx, y: topY+p.h*UNIT+20, text: `${pre}底: ${p.w*M}` });
+                }
+                
+                let hX = topX + 25;
+                if (role === 'inner') hX += 15;
+                scans.push({ type: 'text', x: hX, y: topY+(p.h*UNIT)/2, text: `${pre}高: ${p.h*M}` });
+                scans.push({ type: 'line', x1: topX, y1: topY, x2: topX, y2: topY+p.h*UNIT });
+                scans.push({ type: 'rect', x: topX, y: topY+p.h*UNIT-15, w: 15, h: 15 });
+
+            } else if (p.type === 'parallelogram') {
+                area = (p.w * M) * (p.h * M);
+                let realStartX = cx - ((p.w + p.offset)*UNIT)/2;
+                pts = `${realStartX+p.offset*UNIT},${topY} ${realStartX+(p.w+p.offset)*UNIT},${topY} ${realStartX+p.w*UNIT},${topY+p.h*UNIT} ${realStartX},${topY+p.h*UNIT}`;
+                
+                if(role === 'top') {
+                    scans.push({ type: 'text', x: cx, y: topY-10, text: `頂底: ${p.w*M}` });
+                    scans.push({ type: 'line', x1: realStartX+p.offset*UNIT, y1: topY, x2: realStartX+(p.w+p.offset)*UNIT, y2: topY, style: 'dash' });
+                } else {
+                    scans.push({ type: 'text', x: cx, y: topY+p.h*UNIT+20, text: `${pre}底: ${p.w*M}` });
+                }
+                
+                let hX = realStartX + p.offset*UNIT + 25;
+                if (role === 'inner') hX += 15;
+                scans.push({ type: 'text', x: hX, y: topY+(p.h*UNIT)/2, text: `${pre}高: ${p.h*M}` });
+                scans.push({ type: 'line', x1: realStartX+p.offset*UNIT, y1: topY, x2: realStartX+p.offset*UNIT, y2: topY+p.h*UNIT });
+                scans.push({ type: 'rect', x: realStartX+p.offset*UNIT, y: topY+p.h*UNIT-15, w: 15, h: 15 });
+
+            } else if (p.type === 'trapezoid') {
+                area = (p.topB * M + p.botB * M) * (p.h * M) / 2;
+                let offsetU = p.offset * UNIT;
+                pts = `${startX+offsetU},${topY} ${startX+offsetU+p.topB*UNIT},${topY} ${startX+p.botB*UNIT},${topY+p.h*UNIT} ${startX},${topY+p.h*UNIT}`;
+                
+                let topTextY = (role === 'bottom') ? topY + 20 : topY - 10;
+                let hX = startX + offsetU + 25;
+                
+                if (role === 'inner') {
+                    topTextY -= 15; 
+                    hX += 15;
+                }
+                
+                scans.push({ type: 'text', x: startX+offsetU+(p.topB*UNIT)/2, y: topTextY, text: `${pre}上底: ${p.topB*M}` });
+                scans.push({ type: 'line', x1: startX+offsetU, y1: topY, x2: startX+offsetU+p.topB*UNIT, y2: topY, style: 'dash' });
+                
+                if(role === 'top') {
+                    scans.push({ type: 'text', x: cx, y: topY+p.h*UNIT-10, text: `頂下底: ${p.botB*M}` });
+                    scans.push({ type: 'line', x1: startX, y1: topY+p.h*UNIT, x2: startX+p.botB*UNIT, y2: topY+p.h*UNIT, style: 'dash' });
+                } else {
+                    scans.push({ type: 'text', x: cx, y: topY+p.h*UNIT+20, text: `${pre}下底: ${p.botB*M}` });
+                }
+                
+                scans.push({ type: 'text', x: hX, y: topY+(p.h*UNIT)/2, text: `${pre}高: ${p.h*M}` });
+                scans.push({ type: 'line', x1: startX+offsetU, y1: topY, x2: startX+offsetU, y2: topY+p.h*UNIT });
+                scans.push({ type: 'rect', x: startX+offsetU, y: topY+p.h*UNIT-15, w: 15, h: 15 });
+            }
+
+            return { pts, area, scans };
+        }
+
+        // --- 統整生成題庫 ---
+        function nextQuestion() {
+            isScanned = false;
+            document.getElementById('tool-btn').disabled = false;
+            document.getElementById('shape-hint').innerText = "等待掃描數據...";
+            document.getElementById('shape-hint').style.color = "#aaa";
+            document.getElementById('answer-input').value = "";
+            let inputPlaceholder = "輸入總面積 (Enter)";
+            
+            document.getElementById('ui-current-q').innerText = currentQuestion;
+            document.getElementById('ui-score').innerText = score;
+            
+            const svg = document.getElementById('game-svg');
+            svg.innerHTML = '';
+            svg.classList.remove('shape-correct', 'shape-overflow', 'shape-wither');
+            
+            clearWhiteboard();
+
+            const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            g.id = "shape-group";
+            const cx = 400; 
+            const cyCenter = 300;
+            let M = [1, 2, 3, 4, 5, 6, 8, 10][Math.floor(Math.random() * 8)];
+            
+            let randMode = Math.random();
+            let mode;
+
+            if (currentQuestion === 10 && reverseCount === 0) {
+                mode = 'reverse';
+            } else {
+                if (randMode < 0.25) mode = 'single';
+                else if (randMode < 0.50) mode = 'reverse';
+                else if (randMode < 0.75) mode = 'add';
+                else mode = 'sub';
+            }
+
+            if (mode === 'reverse') reverseCount++;
+            
+            let type1 = getRandomShapeType();
+            let type2 = getRandomShapeType();
+
+            if (mode === 'sub') {
+                type1 = ['rectangle', 'square'][Math.floor(Math.random() * 2)];
+            }
+
+            let area = 0;
+            let scanData = [];
+            let toolHint = "";
+            let shapeHint = "";
+            let formula = "";
+
+            if (mode === 'single') {
+                let p = genParams(type1, 'normal');
+                let topY = cyCenter - (p.h * UNIT) / 2;
+                let d = getShapeDrawData(p, cx, topY, M, 'normal');
+                area = d.area;
+                scanData = d.scans;
+                formula = getFormula(type1);
+                
+                const shape = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+                shape.setAttribute("points", d.pts);
+                shape.setAttribute("fill", "rgba(188, 19, 254, 0.3)");
+                shape.setAttribute("stroke", "#bc13fe");
+                shape.setAttribute("stroke-width", "2");
+                shape.id = "target-shape-poly";
+                g.appendChild(shape);
+
+                toolHint = `🔍 掃描${getShapeName(type1)}`;
+                shapeHint = `圖形已解析：${getShapeName(type1)}`;
+
+            } else if (mode === 'reverse') {
+                let p = genParams(type1, 'normal');
+                let topY = cyCenter - (p.h * UNIT) / 2;
+                let d = getShapeDrawData(p, cx, topY, M, 'normal');
+                let actualArea = d.area;
+                scanData = d.scans;
+
+                let hideType = "";
+                let targetAnswer = 0;
+                let targetName = "";
+
+                if (type1 === 'rectangle') {
+                    if (Math.random() > 0.5) { hideType = '長'; targetAnswer = p.w * M; targetName = "長"; }
+                    else { hideType = '寬'; targetAnswer = p.h * M; targetName = "寬"; }
+                } else if (type1 === 'square') {
+                     hideType = '邊長'; targetAnswer = p.s * M; targetName = "邊長";
+                } else if (type1 === 'triangle' || type1 === 'parallelogram') {
+                    if (Math.random() > 0.5) { hideType = '底'; targetAnswer = p.w * M; targetName = "底"; }
+                    else { hideType = '高'; targetAnswer = p.h * M; targetName = "高"; }
+                } else if (type1 === 'trapezoid') {
+                    let r = Math.random();
+                    if (r < 0.33) { hideType = '上底'; targetAnswer = p.topB * M; targetName = "上底"; }
+                    else if (r < 0.66) { hideType = '下底'; targetAnswer = p.botB * M; targetName = "下底"; }
+                    else { hideType = '高'; targetAnswer = p.h * M; targetName = "高"; }
+                }
+
+                scanData.forEach(item => {
+                    if (item.type === 'text' && item.text.includes(hideType)) {
+                        item.text = item.text.replace(/:\s*\d+/, ': ?');
+                    }
+                });
+
+                scanData.push({
+                    type: 'text',
+                    x: cx + 45,
+                    y: cyCenter - 40,
+                    text: `已知面積: ${actualArea}`,
+                    color: '#ffeb3b',
+                    fontSize: '22px'
+                });
+
+                area = targetAnswer;
+                formula = `反推計算 (已知面積求${targetName})`;
+
+                const shape = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+                shape.setAttribute("points", d.pts);
+                shape.setAttribute("fill", "rgba(188, 19, 254, 0.3)");
+                shape.setAttribute("stroke", "#bc13fe");
+                shape.setAttribute("stroke-width", "2");
+                shape.id = "target-shape-poly";
+                g.appendChild(shape);
+
+                toolHint = `🔍 掃描${getShapeName(type1)} (反推模式)`;
+                shapeHint = `圖形已解析：請反推計算出「${targetName}」`;
+                inputPlaceholder = `輸入${targetName} (Enter)`;
+
+            } else if (mode === 'add') {
+                let pT = genParams(type1, 'top');
+                let pB = genParams(type2, 'bottom');
+                let totalH = pT.h + pB.h;
+                let topY_T = cyCenter - (totalH * UNIT) / 2;
+                let topY_B = topY_T + pT.h * UNIT;
+
+                let dT = getShapeDrawData(pT, cx, topY_T, M, 'top');
+                let dB = getShapeDrawData(pB, cx, topY_B, M, 'bottom');
+
+                area = dT.area + dB.area;
+                scanData = dT.scans.concat(dB.scans);
+                formula = "各區塊面積相加";
+
+                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                path.setAttribute("d", `${makePath(dT.pts)} ${makePath(dB.pts)}`);
+                path.setAttribute("fill", "rgba(188, 19, 254, 0.3)");
+                path.setAttribute("fill-rule", "nonzero");
+                path.setAttribute("stroke", "#bc13fe");
+                path.setAttribute("stroke-width", "2");
+                path.id = "target-shape-path";
+                g.appendChild(path);
+
+                toolHint = `✂️ 雷射切割: ${getShapeName(type1)} 疊加 ${getShapeName(type2)}`;
+                shapeHint = `碎片已切割：請相加計算總面積`;
+
+            } else if (mode === 'sub') {
+                let pO = genParams(type1, 'outer');
+                let pI = genParams(type2, 'inner');
+                let topY_O = cyCenter - (pO.h * UNIT) / 2;
+                let topY_I = cyCenter - (pI.h * UNIT) / 2; 
+                
+                let dO = getShapeDrawData(pO, cx, topY_O, M, 'outer');
+                let dI = getShapeDrawData(pI, cx, topY_I, M, 'inner');
+
+                area = dO.area - dI.area;
+                scanData = dO.scans.concat(dI.scans);
+                formula = "大面積 - 挖空小面積";
+
+                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                path.setAttribute("d", `${makePath(dO.pts)} ${makePath(dI.pts)}`);
+                path.setAttribute("fill", "rgba(188, 19, 254, 0.3)");
+                path.setAttribute("fill-rule", "evenodd");
+                path.setAttribute("stroke", "#bc13fe");
+                path.setAttribute("stroke-width", "2");
+                path.id = "target-shape-path";
+                g.appendChild(path);
+
+                toolHint = `✂️ 測量中空: ${getShapeName(type1)} 挖空 ${getShapeName(type2)}`;
+                shapeHint = `軌道已測量：大面積扣除中空區域`;
+            }
+
+            svg.appendChild(g);
+            currentShapeData = { area, scanData, shapeHint, formula };
+            document.getElementById('tool-btn').innerText = toolHint;
+            document.getElementById('answer-input').placeholder = inputPlaceholder;
+        }
+
+        function useTool() {
+            if (isScanned) return;
+            initAudio();
+            playFX('scan');
+            
+            const effect = document.getElementById('scan-effect');
+            effect.style.animation = 'none';
+            void effect.offsetWidth; 
+            effect.style.animation = 'scanSweep 1.2s ease-in-out';
+
+            setTimeout(() => {
+                isScanned = true;
+                document.getElementById('tool-btn').disabled = true;
+                drawScanData();
+                const hintEl = document.getElementById('shape-hint');
+                hintEl.innerText = currentShapeData.shapeHint;
+                hintEl.style.color = "var(--neon-green)";
+                document.getElementById('answer-input').focus();
+            }, 1000);
+        }
+
+        function drawScanData() {
+            const g = document.getElementById('shape-group');
+            currentShapeData.scanData.forEach(item => {
+                if (item.type === 'text') {
+                    const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                    text.setAttribute("x", item.x); text.setAttribute("y", item.y);
+                    text.setAttribute("class", "svg-text");
+                    text.setAttribute("text-anchor", "middle"); 
+                    text.textContent = item.text;
+                    if (item.color) text.style.fill = item.color;
+                    if (item.fontSize) text.style.fontSize = item.fontSize;
+                    g.appendChild(text);
+                } else if (item.type === 'line') {
+                    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                    line.setAttribute("x1", item.x1); line.setAttribute("y1", item.y1);
+                    line.setAttribute("x2", item.x2); line.setAttribute("y2", item.y2);
+                    line.setAttribute("class", "svg-line");
+                    if(item.style === 'cross') { line.setAttribute("stroke", "#ff4500"); }
+                    g.appendChild(line);
+                } else if (item.type === 'rect') {
+                    const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                    rect.setAttribute("x", item.x); rect.setAttribute("y", item.y - item.h);
+                    rect.setAttribute("width", item.w); rect.setAttribute("height", item.h);
+                    rect.setAttribute("class", "svg-right-angle");
+                    g.appendChild(rect);
+                }
+            });
+        }
+
+        function checkAnswer() {
+            if (!isScanned) {
+                alert("請先啟動掃描儀或切割工具獲取數據！");
+                return;
+            }
+            const inputVal = document.getElementById('answer-input').value;
+            if (inputVal === "") return;
+            const input = parseFloat(inputVal);
+            
+            const shapeNode = document.getElementById('target-shape-poly') || document.getElementById('target-shape-path');
+            
+            if (input === currentShapeData.area) {
+                score++;
+                document.getElementById('ui-score').innerText = score; 
+                playFX('correct');
+                shapeNode.classList.add('shape-correct');
+                
+                setTimeout(() => {
+                    currentQuestion++;
+                    nextQuestion();
+                }, 800);
+            } else {
+                playFX('wrong');
+                let errType = input > currentShapeData.area ? 'shape-overflow' : 'shape-wither';
+                shapeNode.classList.add(errType);
+                
+                setTimeout(() => {
+                    alert(`❌ 能量異常！\n公式: ${currentShapeData.formula}\n正確解答為: ${currentShapeData.area}`);
+                    currentQuestion++;
+                    nextQuestion();
+                }, 800);
+            }
+        }
+
+        // 修改：結束遊戲後切換到獨立的結算畫面
+        function endGame() {
+            clearInterval(timerInterval);
+            const finalAttempted = currentQuestion - 1; 
+            const statusText = score >= 5 ? "闖關成功" : "闖關失敗";
+            
+            // 儲存排行榜數據
+            let data = JSON.parse(localStorage.getItem('jessieMath_ranks')) || [];
+            data.push({ name: playerName, score: score, total: finalAttempted, status: statusText, date: new Date().toLocaleString() });
+            localStorage.setItem('jessieMath_ranks', JSON.stringify(data));
+            
+            // 綁定結算畫面元素
+            const resultTitle = document.getElementById('result-title');
+            const resultDesc = document.getElementById('result-desc');
+            const medalContainer = document.getElementById('result-medal-container');
+
+            if (score >= 5) {
+                resultTitle.innerText = "🎉 恭喜闖關成功！";
+                resultTitle.style.color = "var(--neon-green)";
+                resultDesc.innerHTML = `你在 120 秒內成功修復了 <b>${score}</b> 個區塊！<br>獲得了榮譽過關勳章！`;
+                medalContainer.style.display = "block";
+            } else {
+                resultTitle.innerText = "❌ 闖關失敗！";
+                resultTitle.style.color = "#ff4500";
+                resultDesc.innerHTML = `僅修復了 <b>${score}</b> 個區塊，未達 5 題標準。<br>不要氣餒，再接再厲，加油再闖關一次吧！`;
+                medalContainer.style.display = "none";
+            }
+
+            // 切換至結算畫面
+            switchScreen('screen-result');
+        }
+
+        function togglePause() {
+            isPaused = !isPaused;
+            document.getElementById('overlay').style.display = isPaused ? 'flex' : 'none';
+        }
+
+        function resetGameParams() {
+            score = 0; currentQuestion = 1; timeLeft = 120; reverseCount = 0;
+            document.getElementById('ui-score').innerText = "0";
+            document.getElementById('ui-current-q').innerText = "1";
+            document.getElementById('ui-timer').innerText = "120";
+            document.getElementById('final-medal').style.display = 'none';
+            if (isWbActive) toggleWhiteboard(); 
+        }
+
+        function resetGame() { resetGameParams(); nextQuestion(); }
+        
+        // 返回主選單並刷新排行榜
+        function goHome() { 
+            clearInterval(timerInterval); 
+            switchScreen('screen-login'); 
+            initLeaderboard(); 
+        }
+        
+        function toggleSound() { 
+            isMuted = !isMuted; 
+            document.getElementById('sound-status').innerText = isMuted ? "🔇" : "🔊"; 
+            
+            const bgm = document.getElementById('bgm');
+            if (isMuted) {
+                bgm.pause();
+            } else {
+                bgm.play().catch(e => console.log(e));
+                initAudio();
+            }
+        }
+
+        window.onload = initLeaderboard;
+    </script>
+</body>
+</html>
